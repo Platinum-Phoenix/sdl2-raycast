@@ -23,7 +23,9 @@ OR
 #include <algorithm>
 #include <ctime>
 #include <queue>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include "raycasting.h"
 #include "defaults.h"
 #include "settingsmanager.h"
@@ -530,6 +532,7 @@ void Game::start() {
   // Load Textures
   //--------------
 
+#ifdef _WIN32
   if (!wallsImage.loadBitmap("..\\res\\walls4.bmp")) {
     printf("Error loading walls4.bmp\n");
     return;
@@ -546,16 +549,42 @@ void Game::start() {
     printf("Error loading gatesopen.bmp\n");
     return;
   }
+#else
+
+  if (!wallsImage.loadBitmap("../res/walls4.bmp")) {
+    printf("Error loading walls4.bmp\n");
+    return;
+  }
+  if (!wallsImageDark.loadBitmap("../res/walls4dark.bmp")) {
+    printf("Error loading walls4dark.bmp\n");
+    return;
+  }
+  if (!gatesImage.loadBitmap("../res/gates.bmp")) {
+    printf("Error loading gates.bmp\n");
+    return;
+  }
+  if (!gatesOpenImage.loadBitmap("../res/gatesopen.bmp")) {
+    printf("Error loading gatesopen.bmp\n");
+    return;
+  }
+#endif
 
   wallsImage.createTexture(renderer);
   wallsImageDark.createTexture(renderer);
   gatesImage.createTexture(renderer);
   gatesOpenImage.createTexture(renderer);
 
-  if (!gunImage.loadBitmap("..\\res\\gun1a.bmp")) {
+#ifdef _WIN32
+  if (!gunImage.loadBitmap("..\\res/gun1a.bmp")) {
     printf("Error loading gun image\n");
     return;
   }
+#else
+  if (!gunImage.loadBitmap("../res/gun1a.bmp")) {
+    printf("Error loading gun image\n");
+    return;
+  }
+#endif
   Uint32 colorKey = SDL_MapRGB(gunImage.getSurface()->format,152,0,136);
   SDL_SetColorKey( gunImage.getSurface(), true, colorKey );
   gunImage.createTexture(renderer);
@@ -580,7 +609,11 @@ void Game::start() {
        i!=spriteFilenames.end(); ++i)
   {
     int textureid = i->first;
+#ifdef _WIN32
     std::string filename = "..\\res\\" + i->second;
+#else
+    std::string filename = "../res/" + i->second;
+#endif
     printf("Loading texture image %s\n", filename.c_str());
     SurfaceTexture& surfaceTexture = spriteTextures[textureid];
     if (!surfaceTexture.loadBitmap(filename.c_str())) {
@@ -607,7 +640,13 @@ void Game::start() {
        i!=floorCeilingFilenames.end(); ++i)
   {
     int textureid = i->first;
+#ifdef _WIN32
     std::string filename = "..\\res\\" + i->second;
+#else
+    std::string filename = "../res/" + i->second;
+#endif
+
+
     printf("Loading bitmap image %s\n", filename.c_str());
     Bitmap& bitmap = floorCeilingBitmaps[textureid];
     if (!bitmap.load(filename.c_str(), renderer, pf)) {
@@ -616,8 +655,13 @@ void Game::start() {
     }
   }
 
+#ifdef _WIN32
   ceilingBitmap.load("..\\res\\texture1.bmp", renderer, pf);
   skyboxSurface = SDL_LoadBMP("..\\res\\skybox2.bmp");
+#else
+  ceilingBitmap.load("../res/texture1.bmp", renderer, pf);
+  skyboxSurface = SDL_LoadBMP("../res/skybox2.bmp");
+#endif
 
   if (!skyboxSurface) {
     printf("Error loading skybox2.bmp\n");
@@ -632,10 +676,17 @@ void Game::start() {
     return;
   }
 
+#ifdef _WIN32
   projectileFireSound = Mix_LoadWAV( "..\\res\\iceball.wav" );
   projectileExplodeSound = Mix_LoadWAV( "..\\res\\explode.wav" );
   doorOpenSound = Mix_LoadWAV( "..\\res\\door-09.wav" );
   doorCloseSound = Mix_LoadWAV( "..\\res\\door-08.wav" );
+#else
+  projectileFireSound = Mix_LoadWAV( "../res/iceball.wav" );
+  projectileExplodeSound = Mix_LoadWAV( "../res/explode.wav" );
+  doorOpenSound = Mix_LoadWAV( "../res/door-09.wav" );
+  doorCloseSound = Mix_LoadWAV( "../res/door-08.wav" );
+#endif
   Mix_VolumeChunk(projectileFireSound, MIX_MAX_VOLUME/2);
   Mix_VolumeChunk(projectileExplodeSound, MIX_MAX_VOLUME/3);
   Mix_VolumeChunk(doorOpenSound, MIX_MAX_VOLUME);

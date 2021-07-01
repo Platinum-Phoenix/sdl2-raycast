@@ -6,7 +6,12 @@ https://github.com/andrew-lim
 */
 #ifndef SDL2_UTILS_H
 #define SDL2_UTILS_H
+
+#ifdef _WIN32
 #include <SDL2\SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 namespace al {
 namespace sdl2utils {
